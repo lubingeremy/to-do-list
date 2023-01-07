@@ -8,52 +8,97 @@ class Todo extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      tasks: Array(),
+      tasks: [{
+        unchecked: Array(),
+        checked: Array(),
+      }]
     }
   }
 
   handleSubmit(event) {
     event.preventDefault();
+    const tasks = this.state.tasks[0]
     const newTask = event.target[0].value
     if (!newTask) {
       return;
     }
-    const tasks = this.state.tasks.slice();
-    tasks.push(newTask);
+    const unchecked = tasks.unchecked.slice();
+    const checked = tasks.checked.slice();
+    unchecked.push(newTask);
     this.setState({
-      tasks: tasks,
+      tasks: [{
+        unchecked: unchecked,
+        checked: checked,
+      }]
     });
     event.target[0].value = null;
     event.target[0].focus();
   }
 
-  handleDelete(i) {
-    console.log(i, this.state.tasks[i]);
-    const tasks = this.state.tasks.slice()
-    tasks.splice(i, 1);
+  handleDelete(i, check) {
+    const tasks = this.state.tasks[0]
+
+    if(check) {
+      // console.log(i, tasks.unchecked[i]);
+      const unchecked = tasks.unchecked.slice()
+      const checked = tasks.checked.slice()
+      checked.splice(i, 1);
+      this.setState({
+        tasks: [{
+          unchecked: unchecked,
+          checked: checked,
+        }]
+      })
+      return;
+    }
+
+    // console.log(i, tasks.unchecked[i]);
+    const unchecked = tasks.unchecked.slice()
+    const checked = tasks.checked.slice()
+    unchecked.splice(i, 1);
     this.setState({
-      tasks: tasks,
+      tasks: [{
+        unchecked: unchecked,
+        checked: checked,
+      }]
     })
   }
 
   handleChange(event) {
-    event.target.parentElement.style.textDecoration = "line-through"
-    console.log(event)
+    const parentStyle = event.target.parentElement.style
+
+    if(parentStyle.textDecoration){
+      parentStyle.textDecoration = null
+      return;
+    }
+
+    parentStyle.textDecoration = "line-through"
   }
 
+
   render() {
-    const taskChecked = false;
-    const tasksList = this.state.tasks.map((id, task) => {
+    const tasks = this.state.tasks[0];
+    // console.log(tasks)
+    const tasksList = tasks.unchecked.map((id, task) => {
       return (
         <>
           <li key={task}>
             <input type="checkbox" onChange={(event) => this.handleChange(event)}></input>
-            {this.state.tasks[task]}
+            {tasks.unchecked[task]}
             <button onClick={(task) => this.handleDelete(task)}>D</button>
             <button onClick={() => this.handleDelete(task)}>E</button>
           </li>
         </>
       )
+    })
+
+    const checkedTasks = tasks.checked.map((id, checkedTask) => {
+      <li key={checkedTask}>
+        <input type="checkbox" onChange={(event) => this.handleChange(event)}></input>
+        {tasks.unchecked[checkedTask]}
+        <button onClick={(checkedTask) => this.handleDelete(checkedTask)}>D</button>
+        <button onClick={() => this.handleDelete(checkedTask)}>E</button>
+      </li>
     })
 
     return (
@@ -65,6 +110,8 @@ class Todo extends React.Component {
         </form>
         <hr/>
         <ul>{tasksList}</ul>
+        <hr/>
+        <ul>{checkedTasks}</ul>
       </>
     )
   }
