@@ -3,13 +3,23 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
 
+
+class Tasks {
+  constructor(text) {
+    // Randomize id
+    this.id = Math.random().toString(16).slice(2) + "-" + Date.now().toString()
+    this.text = text;
+  }
+}
+
 class Todo extends React.Component {
 
   constructor(props) {
     super(props);
     this.state = {
       tasks: [{
-        unchecked: Array(),
+        unchecked: ["123","456","789","10","11","12","13"],
+        // unchecked: Array(),
         checked: Array(),
       }]
     }
@@ -19,12 +29,16 @@ class Todo extends React.Component {
     event.preventDefault();
     const tasks = this.state.tasks[0]
     const newTask = event.target[0].value
+    // const newTask = ["123","456","789","10","11","12","13"]
+
     if (!newTask) {
       return;
     }
     const unchecked = tasks.unchecked.slice();
     const checked = tasks.checked.slice();
     unchecked.push(newTask);
+// //////////////////////
+// //////////////////////
     this.setState({
       tasks: [{
         unchecked: unchecked,
@@ -75,8 +89,11 @@ class Todo extends React.Component {
     parentStyle.textDecoration = "line-through"
   }
 
-
   render() {
+
+    const zfu = "KOI"
+
+
     const tasks = this.state.tasks[0];
     // console.log(tasks)
     const tasksList = tasks.unchecked.map((id, task) => {
